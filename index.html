@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WilsonHCG | Dual-Track Sales Search Showcase</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --brand-mint: #91EBC9;
+            --brand-yellow: #FCF5E3;
+            --brand-dark: #16170F;
+            --brand-teal: #00AE8A;
+            --white: #FFFFFF;
+            --off-white: #F9FAFB;
+            --font-heading: 'Inter', sans-serif;
+            --font-serif: 'Merriweather', serif;
+            --font-body: 'Inter', sans-serif;
+            --border-color: #E5E7EB;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--brand-mint);
+            color: var(--brand-dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--brand-dark);
+            padding: 1.25rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo { display: flex; flex-direction: column; line-height: 1; }
+        .brand-logo h1 { font-family: var(--font-heading); font-size: 2.5rem; letter-spacing: -2px; text-transform: lowercase; margin-bottom: 2px; }
+        .brand-logo span { font-family: var(--font-body); font-size: 0.8rem; color: #666; font-weight: 400; }
+
+        nav { display: flex; gap: 1rem; }
+        .nav-btn {
+            background: transparent; border: none; color: var(--brand-dark); font-family: var(--font-body);
+            font-weight: 300; font-size: 1rem; padding: 0.6rem 1.2rem; cursor: pointer; transition: all 0.2s ease;
+            position: relative;
+        }
+        .nav-btn.active { font-weight: 500; }
+        .nav-btn.active::after { content: ''; position: absolute; bottom: -5px; left: 0; width: 100%; height: 2px; background: var(--brand-teal); }
+        .nav-btn:hover { color: var(--brand-teal); }
+
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .mandate-card { background: var(--brand-yellow); border-radius: 4px; margin-bottom: 2rem; overflow: hidden; box-shadow: 0 4px 12px rgba(22,23,15,0.05); }
+        .mandate-header { padding: 1.5rem 2rem; background: var(--brand-dark); color: var(--white); }
+        .mandate-header h2 { font-weight: 300; font-size: 1.5rem; }
+        .mandate-body { padding: 2rem; }
+        .mandate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 1rem; }
+        .mandate-section h3 { font-size: 1.1rem; margin-bottom: 0.8rem; text-transform: uppercase; border-bottom: 2px solid var(--brand-dark); padding-bottom: 0.25rem; }
+        .mandate-section ul { list-style: none; font-size: 1rem; }
+        .mandate-section li { margin-bottom: 0.6rem; padding-left: 16px; position: relative; }
+        .mandate-section li::before { content: "■"; position: absolute; left: 0; color: var(--brand-teal); font-size: 0.8rem; top: 4px; }
+
+        .candidate-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.5rem; }
+        
+        .candidate-card { background: var(--white); border-radius: 6px; padding: 2rem; box-shadow: 0 6px 16px rgba(22,23,15,0.06); transition: transform 0.2s ease; display: flex; flex-direction: column; }
+        .candidate-card:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(22,23,15,0.1); }
+        
+        .badge { display: inline-block; padding: 6px 12px; background: var(--brand-yellow); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; margin-bottom: 1rem; border-radius: 4px; letter-spacing: 0.5px; color: var(--brand-dark); }
+        
+        .candidate-name { font-weight: 700; text-transform: uppercase; font-size: 1.4rem; letter-spacing: -0.3px; margin-bottom: 0.25rem; }
+        .candidate-meta { font-size: 0.95rem; color: #555; margin-bottom: 0.75rem; }
+        .candidate-status { font-size: 0.85rem; font-weight: 600; color: var(--brand-teal); margin-bottom: 1.25rem; display: flex; align-items: center; gap: 0.5rem; }
+        
+        .card-preview { font-size: 0.95rem; color: #333; margin-bottom: 1.5rem; flex-grow: 1; border-top: 1px solid var(--border-color); padding-top: 1rem; line-height: 1.5; }
+        
+        .card-actions { display: flex; gap: 1rem; margin-top: auto; }
+        .btn-action { flex: 1; padding: 0.8rem; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 4px; text-align: center; text-transform: uppercase; transition: background 0.2s; }
+        .btn-view { background: var(--brand-dark); color: var(--white); }
+        .btn-view:hover { background: #333; }
+        .btn-linkedin { background: var(--brand-teal); color: var(--white); text-decoration: none;}
+        .btn-linkedin:hover { background: #009970; }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 1.5rem; }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-card { background: var(--white); border: none; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 3rem; position: relative; border-radius: 6px; box-shadow: 0 25px 50px rgba(0,0,0,0.15); }
+        .modal-close { position: absolute; top: 1.5rem; right: 1.5rem; background: var(--brand-dark); color: var(--white); border: none; width: 40px; height: 40px; border-radius: 50%; font-size: 1rem; cursor: pointer; }
+        .modal-section { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
+        .modal-section h4 { font-family: var(--font-heading); text-transform: uppercase; margin-bottom: 1rem; font-size: 1.1rem; color: var(--brand-dark); }
+        .modal-section p { font-size: 1.05rem; color: #444; line-height: 1.6; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="brand-logo">
+                <h1>wilson</h1>
+                <span>A fresh take on talent</span>
+            </div>
+            <nav>
+                <button class="nav-btn active" onclick="switchTab('head-of-sales-tab', this)">Track 1: Sales Leader (4)</button>
+                <button class="nav-btn" onclick="switchTab('vp-ic-tab', this)">Track 2: VP IC Sales (4)</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <!-- TRACK 1: HEAD OF SALES -->
+        <div id="head-of-sales-tab" class="tab-content active">
+            <div class="mandate-card">
+                <div class="mandate-header">
+                    <h2>Track 1: Sales Leader</h2>
+                </div>
+                <div class="mandate-body">
+                    <p style="font-size: 1.1rem; margin-bottom: 1.5rem; font-weight: 300;">
+                        <strong>Mandate:</strong> A strategic sales leader who can build the infrastructure and lead the team, but also carry their own bag.
+                    </p>
+                    <div class="mandate-grid">
+                        <div class="mandate-section">
+                            <h3>Core Profile</h3>
+                            <ul>
+                                <li>Heavy-hitter RPO/Workforce experience.</li>
+                                <li>Player-coach DNA.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="candidate-grid">
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Americas RPO Leader</span>
+                        <h3 class="candidate-name">Kurt Trost</h3>
+                        <div class="candidate-meta"><strong>AMS</strong> • Lockport, IL</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Meeting with CEO (Sep 14)
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>Pure-play enterprise RPO sales leader at top-tier global competitors. Currently SVP & Head of Sales for the Americas at AMS, and p...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(0)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/kurttrost" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Commercial Executive & Builder</span>
+                        <h3 class="candidate-name">Shaun Cheatham</h3>
+                        <div class="candidate-meta"><strong>ex-Hays US</strong> • Nashville, TN</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Meeting with CEO (Sep 21)
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>High-velocity sales architect with proven 'resurrecter' and builder DNA. Scaled Hays' US enterprise sales organization from 2 to 3...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(1)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/shaun-cheatham" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Enterprise Outsourcing Leader</span>
+                        <h3 class="candidate-name">Justin McCollum</h3>
+                        <div class="candidate-meta"><strong>Randstad Enterprise</strong> • Frisco, TX</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: In Process with CEO
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>SIA 40 Under 40 honoree with 15+ years of experience across enterprise sales, MSP, and RPO solutions. Proven progression through R...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(2)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/justin-mccollum" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Revenue Operations Executive</span>
+                        <h3 class="candidate-name">Dan Leva</h3>
+                        <div class="candidate-meta"><strong>Cielo Talent</strong> • New York City Metropolitan Area</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: In Process with CEO
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>Exceptional commercial strategist and RevOps architect with deep leadership experience at premier PE-backed RPO firms (SVP RevOps ...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(3)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/danleva" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TRACK 2: VP IC SALES -->
+        <div id="vp-ic-tab" class="tab-content">
+            <div class="mandate-card">
+                <div class="mandate-header">
+                    <h2>Track 2: VP IC Sales</h2>
+                </div>
+                <div class="mandate-body">
+                    <p style="font-size: 1.1rem; margin-bottom: 1.5rem; font-weight: 300;">
+                        <strong>Mandate:</strong> A high-performing individual contributor. Pure hunter mentality with deep RPO experience and strong existing relationships.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="candidate-grid">
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Global Enterprise RPO Hunter</span>
+                        <h3 class="candidate-name">Dan Cha</h3>
+                        <div class="candidate-meta"><strong>Randstad Enterprise</strong> • Las Vegas, NV</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Meeting with CEO (Sep 14)
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>Elite enterprise seller currently pacing at 525% of quota at Randstad Enterprise. Highly strategic, systematic, and disciplined co...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(4)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/danielcha2026" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Enterprise RPO Rainmaker</span>
+                        <h3 class="candidate-name">Michael Johnson</h3>
+                        <div class="candidate-meta"><strong>Nimble.LA (ex-LevelUP, Impellam, Kelly)</strong> • Auburn, MI</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Interviewed with CEO
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>Heavyweight enterprise RPO producer with a 15+ year record of landing transformational contracts. At LevelUP, ranked as #1 produce...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(5)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/michael-johnson10" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Enterprise RPO/MSP Hunter</span>
+                        <h3 class="candidate-name">Jason Bouchard</h3>
+                        <div class="candidate-meta"><strong>Yoh</strong> • Bradenton, FL</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Interviewed with CEO (Sep 9)
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>Gritty, relentless enterprise hunter with 11 years at Manpower, plus Allegis, Resource Solutions, and Yoh. Proven ability to origi...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(6)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/jason-bouchard-ccwp-3381531" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+                <div class="candidate-card">
+                    <div>
+                        <span class="badge">Strategic Client Partner</span>
+                        <h3 class="candidate-name">Charles McLendon</h3>
+                        <div class="candidate-meta"><strong>Randstad Enterprise</strong> • Atlanta, GA</div>
+                        <div class="candidate-status">
+                            <span style="font-size:1.2rem; color: var(--brand-teal);">●</span> Status: Interviewed with CEO
+                        </div>
+                    </div>
+                    <div class="card-preview">
+                        <em>High-EQ, consultative workforce futurist and tenured RPO solution seller. Former VP of RPO Sales at KellyOCG for 3 years, and curr...</em>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-action btn-view" onclick="openModal(7)">Read Exec Notes</button>
+                        <a href="https://www.linkedin.com/in/charles-mclendon-bb343832" target="_blank" class="btn-action btn-linkedin">LinkedIn Profile</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Popup for Notes -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModalDirect()">X</button>
+            <span class="badge" id="modal-badge">Profile</span>
+            <h2 class="candidate-name" id="modal-name">Name</h2>
+            <div class="candidate-meta" id="modal-meta">Title • Company • Location</div>
+            
+            <div class="modal-section">
+                <h4 style="color: var(--brand-teal);">Executive Summary & The "Good"</h4>
+                <p id="modal-good">-</p>
+            </div>
+            <div class="modal-section">
+                <h4 style="color: #d9534f;">Potential Risks & Trade-Offs</h4>
+                <p id="modal-tradeoff">-</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const candidates = [{"Track": "Head of Sales", "Candidate": "Kurt Trost", "BackgroundProfile": "Americas RPO Leader", "CurrentCompany": "AMS", "Location": "Lockport, IL", "TheGood": "Pure-play enterprise RPO sales leader at top-tier global competitors. Currently SVP & Head of Sales for the Americas at AMS, and previously Head of North America RPO Sales at ManpowerGroup Talent Solutions. Deep expertise in tech-enabled RPO, AI sourcing, and complex enterprise bid architecture. Brings immediate market stature, hands-on RFP engagement, and unmatched competitive intelligence across AMS, Manpower, and Korn Ferry.", "TheTradeOff": "Only recently joined AMS (late 2025). Extracting him requires a compelling growth narrative, equity upside, and the agility of Wilson versus the corporate monolith. Used to substantial enterprise support infrastructure, though he remains active in frontline deal mechanics.", "Status": "Meeting with CEO (Sep 14)", "LinkedIn": "https://www.linkedin.com/in/kurttrost"}, {"Track": "Head of Sales", "Candidate": "Shaun Cheatham", "BackgroundProfile": "Commercial Executive & Builder", "CurrentCompany": "ex-Hays US", "Location": "Nashville, TN", "TheGood": "High-velocity sales architect with proven 'resurrecter' and builder DNA. Scaled Hays' US enterprise sales organization from 2 to 35 reps (+$10M net-new run rate) and oversaw a $250M commercial business as CCO. True player-coach who personally billed >$2M GP as an individual producer and actively hunts executive relationships. Available immediately with 10+ years of leadership roots in Tampa.", "TheTradeOff": "Volume at Hays and Veredus centered heavily on Technology/IT staffing and MSP; lighter on multi-year, complex global enterprise RPO deals compared to pure-play competitors.", "Status": "Meeting with CEO (Sep 21)", "LinkedIn": "https://www.linkedin.com/in/shaun-cheatham"}, {"Track": "Head of Sales", "Candidate": "Justin McCollum", "BackgroundProfile": "Enterprise Outsourcing Leader", "CurrentCompany": "Randstad Enterprise", "Location": "Frisco, TX", "TheGood": "SIA 40 Under 40 honoree with 15+ years of experience across enterprise sales, MSP, and RPO solutions. Proven progression through Randstad Enterprise (RVP -> SVP of Sales -> VP Executive Client Partner) and Director of Sales at Advantage xPO. High-stamina enterprise competitor with deep alignment to Randstad operating standards and commercial rigor.", "TheTradeOff": "Tenure at the highest executive altitude is slightly more recent (1 year as SVP) compared to leaders who have run multi-region continental RPO sales divisions for multiple years.", "Status": "In Process with CEO", "LinkedIn": "https://www.linkedin.com/in/justin-mccollum"}, {"Track": "Head of Sales", "Candidate": "Dan Leva", "BackgroundProfile": "Revenue Operations Executive", "CurrentCompany": "Cielo Talent", "Location": "New York City Metropolitan Area", "TheGood": "Exceptional commercial strategist and RevOps architect with deep leadership experience at premier PE-backed RPO firms (SVP RevOps at Cielo, Principal at Buck, Director at Kelly). Deeply understands sales analytics, commercial forecasting, GTM enablement, and the integration of marketing, product, and sales.", "TheTradeOff": "Background is strictly in Revenue Operations, commercial analytics, and sales enablement rather than frontline new-logo hunting or sales leadership. Has not carried an individual sales bag or driven direct client acquisition, which presents a significant transition risk for a player-coach mandate.", "Status": "In Process with CEO", "LinkedIn": "https://www.linkedin.com/in/danleva"}, {"Track": "VP IC", "Candidate": "Dan Cha", "BackgroundProfile": "Global Enterprise RPO Hunter", "CurrentCompany": "Randstad Enterprise", "Location": "Las Vegas, NV", "TheGood": "Elite enterprise seller currently pacing at 525% of quota at Randstad Enterprise. Highly strategic, systematic, and disciplined consultative style. Commands client trust effortlessly and never makes buyers feel 'sold' to. Flawless execution track record within the Randstad system.", "TheTradeOff": "Extremely successful, well-compensated, and comfortable in his current seat. Requires an irresistible long-term equity proposition and commercial autonomy to pry him away.", "Status": "Meeting with CEO (Sep 14)", "LinkedIn": "https://www.linkedin.com/in/danielcha2026"}, {"Track": "VP IC", "Candidate": "Michael Johnson", "BackgroundProfile": "Enterprise RPO Rainmaker", "CurrentCompany": "Nimble.LA (ex-LevelUP, Impellam, Kelly)", "Location": "Auburn, MI", "TheGood": "Heavyweight enterprise RPO producer with a 15+ year record of landing transformational contracts. At LevelUP, ranked as #1 producer and closed the four largest RPO contracts in company history. Ranked #1 at Kelly (400% Club) and #1 in US net-new GP at Manpower (Circle of Stars). Blends deep enterprise RPO solution design with modern AI/Cloud fluency.", "TheTradeOff": "Recent 7-month stint was focused on AI/Cloud enterprise platforms rather than pure talent services; highly motivated and primed to return to enterprise talent solutions.", "Status": "Interviewed with CEO", "LinkedIn": "https://www.linkedin.com/in/michael-johnson10"}, {"Track": "VP IC", "Candidate": "Jason Bouchard", "BackgroundProfile": "Enterprise RPO/MSP Hunter", "CurrentCompany": "Yoh", "Location": "Bradenton, FL", "TheGood": "Gritty, relentless enterprise hunter with 11 years at Manpower, plus Allegis, Resource Solutions, and Yoh. Proven ability to originate, navigate, and close both complex RPO and MSP contracts in long sales cycles. High-energy, resilient, no-fluff street fighter strongly endorsed by industry colleagues.", "TheTradeOff": "Career shows movement across several staffing/workforce firms over recent years; focus should be on ensuring long-term institutional commitment and organizational stickiness.", "Status": "Interviewed with CEO (Sep 9)", "LinkedIn": "https://www.linkedin.com/in/jason-bouchard-ccwp-3381531"}, {"Track": "VP IC", "Candidate": "Charles McLendon", "BackgroundProfile": "Strategic Client Partner", "CurrentCompany": "Randstad Enterprise", "Location": "Atlanta, GA", "TheGood": "High-EQ, consultative workforce futurist and tenured RPO solution seller. Former VP of RPO Sales at KellyOCG for 3 years, and currently RSR VP Senior Client Partner at Randstad Enterprise. Deeply authentic relationship builder who excels in multi-stakeholder enterprise pursuits and commands executive trust with CHROs.", "TheTradeOff": "Natural posture leans deeply consultative and advisory; key interview focus is confirming hunger for high-velocity net-new logo hunting alongside strategic advisory.", "Status": "Interviewed with CEO", "LinkedIn": "https://www.linkedin.com/in/charles-mclendon-bb343832"}];
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        function openModal(index) {
+            const c = candidates[index];
+            document.getElementById('modal-name').innerText = c.Candidate;
+            document.getElementById('modal-badge').innerText = c.BackgroundProfile;
+            document.getElementById('modal-meta').innerText = c.CurrentCompany + ' • ' + c.Location;
+            document.getElementById('modal-good').innerText = c.TheGood;
+            document.getElementById('modal-tradeoff').innerText = c.TheTradeOff;
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal(e) { 
+            if(e.target.id === 'modal-overlay') { 
+                document.getElementById('modal-overlay').classList.remove('active'); 
+            } 
+        }
+        function closeModalDirect() { 
+            document.getElementById('modal-overlay').classList.remove('active'); 
+        }
+    </script>
+</body>
+</html>
